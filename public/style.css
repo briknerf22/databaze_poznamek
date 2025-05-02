@@ -1,0 +1,13 @@
+body {
+    display: flex;
+    flex-direction: column;      /* prvky jdou pod sebe */
+    justify-content: center;     /* svislé zarovnání (vertikálně) */
+    align-items: center;         /* vodorovné zarovnání (horizontálně) */
+    min-height: 100vh;           /* 100% výšky okna */
+    margin: 0;
+    font-family: sans-serif;
+}  
+
+button {
+    margin-top: 5px;
+}

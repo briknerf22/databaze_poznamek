@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Poznámky</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/style2.css">
 </head>
 <body>
   <h1>Moje Poznámky</h1>
@@ -23,25 +23,30 @@
   <script>
     // Pokud máš později nějaké JS pro manipulaci s poznámkami
     document.getElementById('noteForm').addEventListener('submit', function(event) {
-      event.preventDefault();
+  event.preventDefault();
 
-      const title = document.getElementById('title').value;
-      const content = document.getElementById('content').value;
+  const titleInput = document.getElementById('title');
+  const contentInput = document.getElementById('content');
 
-      // Tady bys měl poslat poznámku na server
-      fetch('/notes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content })
-      })
-      .then(response => response.json())
-      .then(data => {
-        // Přidat novou poznámku na stránku
-        const noteDiv = document.createElement('div');
-        noteDiv.innerHTML = `<h3>${data.title}</h3><p>${data.content}</p>`;
-        document.getElementById('notesList').appendChild(noteDiv);
-      });
-    });
+  const title = titleInput.value;
+  const content = contentInput.value;
+
+  fetch('/notes', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, content })
+  })
+  .then(response => response.json())
+  .then(data => {
+    const noteDiv = document.createElement('div');
+    noteDiv.innerHTML = `<h3>${data.title}</h3><p>${data.content}</p>`;
+    document.getElementById('notesList').appendChild(noteDiv);
+
+    // 👇 Vymazání vstupních polí
+    titleInput.value = '';
+    contentInput.value = '';
+  });
+});
   </script>
 </body>
 </html>

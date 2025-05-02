@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <title>Poznámky</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <h1>Moje Poznámky</h1>
+
+  <!-- Formulář pro přidání nové poznámky -->
+  <form id="noteForm">
+    <input type="text" id="title" name="title" placeholder="Nadpis poznámky" required />
+    <textarea id="content" name="content" placeholder="Obsah poznámky" required></textarea><br />
+    <button type="submit">Přidat poznámku</button>
+  </form>
+
+  <!-- Místo pro výpis poznámek -->
+  <div id="notesList">
+    <!-- Poznámky budou tady dynamicky -->
+  </div>
+
+  <script>
+    // Pokud máš později nějaké JS pro manipulaci s poznámkami
+    document.getElementById('noteForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+
+      // Tady bys měl poslat poznámku na server
+      fetch('/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content })
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Přidat novou poznámku na stránku
+        const noteDiv = document.createElement('div');
+        noteDiv.innerHTML = `<h3>${data.title}</h3><p>${data.content}</p>`;
+        document.getElementById('notesList').appendChild(noteDiv);
+      });
+    });
+  </script>
+</body>
+</html>

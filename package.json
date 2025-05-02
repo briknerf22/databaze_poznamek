@@ -1,6 +1,14 @@
 {
+  "name": "databaze-poznamek",
+  "version": "1.0.0",
+  "description": "Jednoduchá aplikace na poznámky v Node.js a Express",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node src/index.js"
+  },
   "dependencies": {
     "body-parser": "^2.2.0",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0"
   }
 }

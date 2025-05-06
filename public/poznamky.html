@@ -23,19 +23,41 @@
   <button id="logoutButton" style="display:none;">Odhlásit se</button>
 
   <script>
-// Zkontroluj, jestli je uživatel přihlášený, například pomocí session
-fetch('/checkSession', { method: 'GET' })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Status session při načítání poznamky:', data); // Výpis stavu session
-    if (data.loggedIn) {
-      // Uživatel je přihlášen, tlačítko pro odhlášení je aktivní
-      document.getElementById('logoutButton').style.display = 'block';
-    } else {
-      console.log('Uživatel není přihlášen. Přesměrování na přihlašovací stránku.');
-      window.location.href = '/index.html';
-    }
-  });
+    // Zkontroluj, jestli je uživatel přihlášený, například pomocí session
+    fetch('/checkSession', { method: 'GET' })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Status session při načítání poznamky:', data); // Výpis stavu session
+        if (data.loggedIn) {
+          // Uživatel je přihlášen, tlačítko pro odhlášení je aktivní
+          document.getElementById('logoutButton').style.display = 'block';
+        } else {
+          console.log('Uživatel není přihlášen. Přesměrování na přihlašovací stránku.');
+          window.location.href = '/index.html';
+        }
+      });
+
+    // Načítání poznámek po načtení stránky
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('/notes', { method: 'GET' })
+        .then(response => response.json())
+        .then(data => {
+          const notesList = document.getElementById('notesList');
+          notesList.innerHTML = ''; // Nejprve vymaž staré poznámky
+
+          data.forEach((note, index) => {
+            const noteDiv = document.createElement('div');
+            noteDiv.classList.add('note');
+            noteDiv.innerHTML = `
+              <h3>${note.title}</h3>
+              <p>${note.content}</p>
+              <button class="importantButton" data-index="${index}">${note.important ? 'Odebrat důležitost' : 'Označit jako důležitou'}</button>
+              <button class="deleteButton" data-index="${index}">Smazat</button>
+            `;
+            notesList.appendChild(noteDiv);
+          });
+        });
+    });
 
     // Přidání poznámky
     document.getElementById('noteForm').addEventListener('submit', function(event) {
@@ -55,7 +77,13 @@ fetch('/checkSession', { method: 'GET' })
       .then(response => response.json())
       .then(data => {
         const noteDiv = document.createElement('div');
-        noteDiv.innerHTML = `<h3>${data.title}</h3><p>${data.content}</p>`;
+        noteDiv.classList.add('note');
+        noteDiv.innerHTML = `
+          <h3>${data.title}</h3>
+          <p>${data.content}</p>
+          <button class="importantButton" data-index="0">Označit jako důležitou</button>
+          <button class="deleteButton" data-index="0">Smazat</button>
+        `;
         document.getElementById('notesList').appendChild(noteDiv);
 
         // Vymazání vstupních polí
@@ -68,6 +96,35 @@ fetch('/checkSession', { method: 'GET' })
     document.getElementById('logoutButton').addEventListener('click', async () => {
       await fetch('/logout', { method: 'POST' });
       window.location.href = '/index.html'; // Přesměrování na přihlašovací stránku
+    });
+
+    // Změna důležitosti poznámky
+    document.getElementById('notesList').addEventListener('click', function(event) {
+      if (event.target && event.target.classList.contains('importantButton')) {
+        const index = event.target.getAttribute('data-index');
+        fetch(`/notes/${index}/important`, {
+          method: 'PUT'
+        })
+        .then(response => response.json())
+        .then(data => {
+          event.target.textContent = data.note.important ? 'Odebrat důležitost' : 'Označit jako důležitou';
+        });
+      }
+    });
+
+    // Smazání poznámky
+    document.getElementById('notesList').addEventListener('click', function(event) {
+      if (event.target && event.target.classList.contains('deleteButton')) {
+        const index = event.target.getAttribute('data-index');
+        fetch(`/notes/${index}`, {
+          method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Po smazání poznámky ji odstraníme ze seznamu na stránce
+          event.target.parentElement.remove();
+        });
+      }
     });
   </script>
 </body>

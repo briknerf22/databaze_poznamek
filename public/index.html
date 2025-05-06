@@ -9,40 +9,42 @@
   <p>Nemáte účet? <a href="/register.html">Zaregistrujte se zde</a>.</p>
 
   <h1>Přihlášení</h1>
-  <form method="POST" action="/login">
-    <input type="text" name="username" placeholder="Uživatelské jméno" required /><br />
-    <input type="password" name="password" placeholder="Heslo" required /><br />
+  <form id="loginForm">
+    <input type="text" id="username" name="username" placeholder="Uživatelské jméno" required /><br />
+    <input type="password" id="password" name="password" placeholder="Heslo" required /><br />
     <button type="submit">Přihlásit se</button>
   </form>
+
+  <script>
+    // Přihlášení uživatele
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Zabráníme tradičnímu odeslání formuláře
+
+      // Získání hodnot z formuláře
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      // Odeslání požadavku na server s použitím fetch
+      fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      .then(response => response.json()) // Zpracování odpovědi
+      .then(data => {
+        console.log('Odpověď serveru při přihlášení:', data); // Výpis odpovědi
+        if (data.message === 'Úspěšně přihlášen!') {
+          console.log('Přesměrování na poznamky.html');
+          window.location.href = '/poznamky.html'; // Přesměrování na stránku s poznámkami
+        } else {
+          alert(data.message); // Pokud je chyba, zobrazí se zpráva
+        }
+      })
+      .catch(error => {
+        console.error('Chyba při přihlášení:', error);
+        alert('Chyba při přihlášení.');
+      });
+    });
+  </script>
 </body>
 </html>
-
-<script>
-  // Přihlášení uživatele
-  document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    fetch('/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Odpověď ze serveru:', data); // Výpis odpovědi ze serveru
-      if (data.message === 'Úspěšně přihlášen!') {
-        // Pokud je přihlášení úspěšné, přesměruj na poznámky
-        window.location.href = '/poznamky.html';
-      } else {
-        alert(data.message);
-      }
-    })
-    .catch(error => {
-      console.error('Chyba při přihlášení:', error);
-      alert('Chyba při přihlášení.');
-    });
-  });
-</script>

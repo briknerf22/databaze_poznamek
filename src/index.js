@@ -66,7 +66,6 @@ app.post('/register', (req, res) => {
 });
 
 // Přihlášení
-// Přihlášení
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const users = loadUsers();
@@ -92,12 +91,12 @@ app.post('/login', async (req, res) => {
 
 // Zkontroluj přihlášení
 app.get('/checkSession', (req, res) => {
-  console.log('Kontrola session:', req.session); // Výpis objektu session při kontrole
+  console.log('Kontrola session na serveru:', req.session); // Výpis celé session
   if (req.session.username) {
     return res.json({ loggedIn: true });
   }
   return res.json({ loggedIn: false });
-});
+})
 
 // Middleware pro ochranu stránek
 function isAuthenticated(req, res, next) {

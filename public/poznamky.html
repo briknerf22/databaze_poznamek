@@ -27,16 +27,16 @@
 fetch('/checkSession', { method: 'GET' })
   .then(response => response.json())
   .then(data => {
-    console.log('Session status:', data); // Výpis session stavu
+    console.log('Status session při načítání poznamky:', data); // Výpis stavu session
     if (data.loggedIn) {
       // Uživatel je přihlášen, tlačítko pro odhlášení je aktivní
       document.getElementById('logoutButton').style.display = 'block';
     } else {
-      // Uživatel není přihlášen, přesměruj ho na přihlašovací stránku
+      console.log('Uživatel není přihlášen. Přesměrování na přihlašovací stránku.');
       window.location.href = '/index.html';
     }
   });
-  
+
     // Přidání poznámky
     document.getElementById('noteForm').addEventListener('submit', function(event) {
       event.preventDefault();

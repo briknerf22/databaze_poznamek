@@ -1,58 +1,99 @@
 /* Obecné styly */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 40px 20px;
-    color: #333;
-  }
-  
-  h1 {
-    text-align: center;
-    color: #444;
-    font-size: 2em;
-    margin-bottom: 30px;
-  }
-  
-  /* Styly pro přihlašovací formulář */
-  form {
-    background: #fff;
-    padding: 20px;
-    margin: 0 auto;
-    max-width: 400px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  
-  input[type="text"],
-  input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    margin-top: 8px;
-    margin-bottom: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-  }
-  
-  button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Malý styl pro chybovou zprávu */
-  .error-message {
-    color: red;
-    text-align: center;
-    margin-top: 10px;
-  }
-  
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 40px 20px;
+  color: #333;
+}
+
+/* Titulek */
+h1 {
+  text-align: center;
+  color: #444;
+  font-size: 2em;
+  margin-bottom: 30px;
+}
+
+/* Odstavec pod nadpisem */
+p {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Kontejner pro formuláře i hlavní obsah */
+.container {
+  background: #fff;
+  padding: 20px 30px;
+  margin: 0 auto;
+  max-width: 400px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Formulářové pole */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* Tlačítka */
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1em;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Odkazový text */
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Chybová zpráva */
+.error-message {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Pro případnou index stránku */
+.main-content {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.main-content h2 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.main-content p {
+  font-size: 1.1em;
+  line-height: 1.6;
+}

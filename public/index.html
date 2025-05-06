@@ -6,38 +6,37 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <p>Nemáte účet? <a href="/register.html">Zaregistrujte se zde</a>.</p>
+  <div class="container">
+    <p>Nemáte účet? <a href="/register.html">Zaregistrujte se zde</a>.</p>
 
-  <h1>Přihlášení</h1>
-  <form id="loginForm">
-    <input type="text" id="username" name="username" placeholder="Uživatelské jméno" required /><br />
-    <input type="password" id="password" name="password" placeholder="Heslo" required /><br />
-    <button type="submit">Přihlásit se</button>
-  </form>
+    <h1>Přihlášení</h1>
+
+    <form id="loginForm">
+      <input type="text" id="username" name="username" placeholder="Uživatelské jméno" required />
+      <input type="password" id="password" name="password" placeholder="Heslo" required />
+      <button type="submit">Přihlásit se</button>
+    </form>
+  </div>
 
   <script>
-    // Přihlášení uživatele
     document.getElementById('loginForm').addEventListener('submit', function(event) {
-      event.preventDefault(); // Zabráníme tradičnímu odeslání formuláře
+      event.preventDefault();
 
-      // Získání hodnot z formuláře
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
 
-      // Odeslání požadavku na server s použitím fetch
       fetch('/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
       })
-      .then(response => response.json()) // Zpracování odpovědi
+      .then(response => response.json())
       .then(data => {
-        console.log('Odpověď serveru při přihlášení:', data); // Výpis odpovědi
+        console.log('Odpověď serveru při přihlášení:', data);
         if (data.message === 'Úspěšně přihlášen!') {
-          console.log('Přesměrování na poznamky.html');
-          window.location.href = '/poznamky.html'; // Přesměrování na stránku s poznámkami
+          window.location.href = '/poznamky.html';
         } else {
-          alert(data.message); // Pokud je chyba, zobrazí se zpráva
+          alert(data.message);
         }
       })
       .catch(error => {

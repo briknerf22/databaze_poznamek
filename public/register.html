@@ -6,21 +6,24 @@
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <h1>Registrace</h1>
+  <div class="container">
+    <h1>Registrace</h1>
 
-  <form id="registerForm">
-    <input type="text" name="username" id="username" placeholder="Uživatelské jméno" required />
-    <input type="password" name="password" id="password" placeholder="Heslo" required />
-    
-    <label>
-      <input type="checkbox" id="consent" required />
-      Souhlasím, že mnou vložená data mohou být využita pro trénink AI
-    </label><br>
+    <form id="registerForm">
+      <input type="text" name="username" id="username" placeholder="Uživatelské jméno" required />
+      <input type="password" name="password" id="password" placeholder="Heslo" required />
 
-    <button type="submit">Registrovat</button>
-  </form>
+      <label>
+        <input type="checkbox" id="consent" required />
+        Souhlasím, že mnou vložená data mohou být využita pro trénink AI
+      </label><br><br>
 
-  <p id="message"></p>
+      <button type="submit">Registrovat</button>
+    </form>
+
+    <p id="message" class="error-message"></p>
+    <p>Máte už účet? <a href="/index.html">Přihlaste se zde</a>.</p>
+  </div>
 
   <script>
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
@@ -40,7 +43,6 @@
       document.getElementById('message').innerText = data.message;
 
       if (res.status === 201) {
-        // Přesměrování na přihlašovací stránku po úspěšné registraci
         setTimeout(() => window.location.href = '/index.html', 1500);
       }
     });

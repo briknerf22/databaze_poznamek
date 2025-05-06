@@ -1,48 +1,47 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8" />
-  <title>Přihlášení</title>
-  <link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .form-container { width: 300px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; }
+    input, button { width: 100%; padding: 10px; margin: 10px 0; }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <p>Nemáte účet? <a href="/register.html">Zaregistrujte se zde</a>.</p>
-
-    <h1>Přihlášení</h1>
-
-    <form id="loginForm">
-      <input type="text" id="username" name="username" placeholder="Uživatelské jméno" required />
-      <input type="password" id="password" name="password" placeholder="Heslo" required />
-      <button type="submit">Přihlásit se</button>
+  <div class="form-container">
+    <h2>Přihlášení</h2>
+    <form id="login-form">
+      <input type="text" id="username" placeholder="Uživatelské jméno" required />
+      <input type="password" id="password" placeholder="Heslo" required />
+      <button type="submit">Přihlásit</button>
     </form>
+    <p id="error-message" style="color: red;"></p>
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-      event.preventDefault();
+    document.querySelector('#login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+      const username = document.querySelector('#username').value;
+      const password = document.querySelector('#password').value;
 
-      fetch('/login', {
+      const res = await fetch('/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Odpověď serveru při přihlášení:', data);
-        if (data.message === 'Úspěšně přihlášen!') {
-          window.location.href = '/poznamky.html';
-        } else {
-          alert(data.message);
-        }
-      })
-      .catch(error => {
-        console.error('Chyba při přihlášení:', error);
-        alert('Chyba při přihlášení.');
       });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        window.location.href = '/poznamky.html'; // Redirect na poznámky
+      } else {
+        document.querySelector('#error-message').textContent = data.message || 'Chyba při přihlášení.';
+      }
     });
   </script>
 </body>

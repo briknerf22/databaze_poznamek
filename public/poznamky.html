@@ -20,33 +20,55 @@
     <!-- Poznámky budou tady dynamicky -->
   </div>
 
+  <button id="logoutButton" style="display:none;">Odhlásit se</button>
+
   <script>
-    // Pokud máš později nějaké JS pro manipulaci s poznámkami
-    document.getElementById('noteForm').addEventListener('submit', function(event) {
-  event.preventDefault();
-
-  const titleInput = document.getElementById('title');
-  const contentInput = document.getElementById('content');
-
-  const title = titleInput.value;
-  const content = contentInput.value;
-
-  fetch('/notes', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, content })
-  })
+// Zkontroluj, jestli je uživatel přihlášený, například pomocí session
+fetch('/checkSession', { method: 'GET' })
   .then(response => response.json())
   .then(data => {
-    const noteDiv = document.createElement('div');
-    noteDiv.innerHTML = `<h3>${data.title}</h3><p>${data.content}</p>`;
-    document.getElementById('notesList').appendChild(noteDiv);
-
-    // 👇 Vymazání vstupních polí
-    titleInput.value = '';
-    contentInput.value = '';
+    console.log('Session status:', data); // Výpis session stavu
+    if (data.loggedIn) {
+      // Uživatel je přihlášen, tlačítko pro odhlášení je aktivní
+      document.getElementById('logoutButton').style.display = 'block';
+    } else {
+      // Uživatel není přihlášen, přesměruj ho na přihlašovací stránku
+      window.location.href = '/index.html';
+    }
   });
-});
+  
+    // Přidání poznámky
+    document.getElementById('noteForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const titleInput = document.getElementById('title');
+      const contentInput = document.getElementById('content');
+
+      const title = titleInput.value;
+      const content = contentInput.value;
+
+      fetch('/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const noteDiv = document.createElement('div');
+        noteDiv.innerHTML = `<h3>${data.title}</h3><p>${data.content}</p>`;
+        document.getElementById('notesList').appendChild(noteDiv);
+
+        // Vymazání vstupních polí
+        titleInput.value = '';
+        contentInput.value = '';
+      });
+    });
+
+    // Odhlášení uživatele
+    document.getElementById('logoutButton').addEventListener('click', async () => {
+      await fetch('/logout', { method: 'POST' });
+      window.location.href = '/index.html'; // Přesměrování na přihlašovací stránku
+    });
   </script>
 </body>
 </html>

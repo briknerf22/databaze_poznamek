@@ -3,10 +3,6 @@
     "password": "$2b$10$zzQrfCvhEfv3dvuGpQD.oOtUTUu3hRyUM/tp78NiBf..WHCokz/yC",
     "consent": true
   },
-  "test": {
-    "password": "$2b$10$IriMT7Aq1bwKoTH33TlrTuT53FvBi0hKq4T5XIYxwXgTyZDRVgOKe",
-    "consent": true
-  },
   "test2": {
     "password": "$2b$10$9g1XLdSuD6DZWdSRgwA49uhS3dtYi3ur7dYOH/EllhxU6Nx/Ggi4i",
     "consent": true

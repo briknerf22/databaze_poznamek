@@ -160,6 +160,39 @@ app.delete('/notes/:index', requireLogin, (req, res) => {
   res.json({ message: 'Poznámka smazána.' });
 });
 
+// ==== Zrušení účtu ==== //
+app.post('/deleteAccount', requireLogin, async (req, res) => {
+  const { password } = req.body;
+  const username = req.session.username;
+
+  const users = loadUsers();
+  const user = users[username];
+
+  if (!user) {
+    return res.status(404).json({ message: 'Uživatel nenalezen.' });
+  }
+
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) {
+    return res.status(403).json({ message: 'Nesprávné heslo.' });
+  }
+
+  // Smazání uživatele
+  delete users[username];
+  saveUsers(users);
+
+  // Smazání poznámek
+  const notes = loadNotes();
+  delete notes[username];
+  saveNotes(notes);
+
+  // Ukončení session
+  req.session.destroy(err => {
+    if (err) return res.status(500).json({ message: 'Chyba při rušení účtu.' });
+    res.json({ message: 'Účet byl úspěšně smazán.' });
+  });
+});
+
 // ==== Statické stránky ==== //
 function isAuthenticated(req, res, next) {
   if (!req.session.username) return res.redirect('/index.html');

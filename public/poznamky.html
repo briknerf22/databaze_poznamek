@@ -22,6 +22,12 @@
 
   <button id="logoutButton" style="display:none;">Odhlásit se</button>
 
+  <button id="deleteAccountBtn">Zrušit účet</button>
+  <div id="deleteAccountForm" style="display:none; margin-top:10px;">
+    <input type="password" id="deletePassword" placeholder="Zadej heslo pro zrušení účtu" />
+    <button id="confirmDeleteBtn">Potvrdit zrušení účtu</button>
+  </div>
+
   <script>
     // Zkontroluj, jestli je uživatel přihlášený, například pomocí session
     fetch('/checkSession', { method: 'GET' })
@@ -109,6 +115,31 @@
         .then(data => {
           event.target.textContent = data.note.important ? 'Odebrat důležitost' : 'Označit jako důležitou';
         });
+      }
+    });
+
+    // Zobrazit formulář pro zrušení účtu
+    document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+      document.getElementById('deleteAccountForm').style.display = 'block';
+    });
+
+    // Odeslání požadavku na zrušení účtu
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+      const password = document.getElementById('deletePassword').value;
+
+      const response = await fetch('/deleteAccount', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(result.message);
+        window.location.href = '/index.html';
+      } else {
+        alert(result.message || 'Chyba při rušení účtu.');
       }
     });
 

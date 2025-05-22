@@ -28,6 +28,11 @@
     <button id="confirmDeleteBtn">Potvrdit zrušení účtu</button>
   </div>
 
+  <label class="switch">
+    <input type="checkbox" id="importantOnly">
+    <span class="slider"></span>
+    Zobrazit pouze důležité poznámky
+  </label>
   <script>
     // Zkontroluj, jestli je uživatel přihlášený, například pomocí session
     fetch('/checkSession', { method: 'GET' })
@@ -157,6 +162,47 @@
         });
       }
     });
+
+    document.getElementById('importantOnly').addEventListener('change', function () {
+    fetch('/notes')
+      .then(res => res.json())
+      .then(notes => {
+        const list = document.getElementById('notesList');
+        list.innerHTML = '';
+
+        const showOnlyImportant = this.checked;
+        const filtered = showOnlyImportant ? notes.filter(n => n.important) : notes;
+
+        filtered.forEach(note => {
+          const div = document.createElement('div');
+          div.innerHTML = `
+            <h3>${note.title}</h3>
+            <p>${note.content}</p>
+            ${note.important ? '<strong style="color:red;">Důležité</strong>' : ''}
+          `;
+          list.appendChild(div);
+        });
+      });
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+  fetch('/notes')
+    .then(res => res.json())
+    .then(notes => {
+      const list = document.getElementById('notesList');
+      list.innerHTML = ''; // vyčisti
+
+      notes.forEach(note => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <h3>${note.title}</h3>
+          <p>${note.content}</p>
+          ${note.important ? '<strong style="color:red;">Důležité</strong>' : ''}
+        `;
+        list.appendChild(div);
+      });
+    });
+});
   </script>
 </body>
 </html>

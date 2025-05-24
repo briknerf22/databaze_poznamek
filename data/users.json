@@ -3,8 +3,8 @@
     "password": "$2b$10$zzQrfCvhEfv3dvuGpQD.oOtUTUu3hRyUM/tp78NiBf..WHCokz/yC",
     "consent": true
   },
-  "test2": {
-    "password": "$2b$10$9g1XLdSuD6DZWdSRgwA49uhS3dtYi3ur7dYOH/EllhxU6Nx/Ggi4i",
+  "test": {
+    "password": "$2b$10$x/APRsnpvL1K07mpp1L7BeDWcn0Y2UST8adH.QSYX1ZN4JJtNzCU2",
     "consent": true
   }
 }

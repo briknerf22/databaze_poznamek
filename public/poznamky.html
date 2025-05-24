@@ -4,6 +4,22 @@
   <meta charset="UTF-8" />
   <title>Poznámky</title>
   <link rel="stylesheet" href="/style-registrace.css">
+  <style>
+    /* Lehké základní stylování poznámek */
+    .note {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .importantLabel {
+      color: red;
+      font-weight: bold;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+  </style>
 </head>
 <body>
   <h1>Moje Poznámky</h1>
@@ -28,181 +44,171 @@
     <button id="confirmDeleteBtn">Potvrdit zrušení účtu</button>
   </div>
 
-  <label class="switch">
+  <label class="switch" style="display:block; margin-top:20px;">
     <input type="checkbox" id="importantOnly">
     <span class="slider"></span>
     Zobrazit pouze důležité poznámky
   </label>
-  <script>
-    // Zkontroluj, jestli je uživatel přihlášený, například pomocí session
-    fetch('/checkSession', { method: 'GET' })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Status session při načítání poznamky:', data); // Výpis stavu session
-        if (data.loggedIn) {
-          // Uživatel je přihlášen, tlačítko pro odhlášení je aktivní
-          document.getElementById('logoutButton').style.display = 'block';
-        } else {
-          console.log('Uživatel není přihlášen. Přesměrování na přihlašovací stránku.');
-          window.location.href = '/index.html';
-        }
-      });
 
-    // Načítání poznámek po načtení stránky
-    document.addEventListener('DOMContentLoaded', function() {
-      fetch('/notes', { method: 'GET' })
-        .then(response => response.json())
-        .then(data => {
-          const notesList = document.getElementById('notesList');
-          notesList.innerHTML = ''; // Nejprve vymaž staré poznámky
+<script>
+  // Globální proměnná pro poznámky
+  let notes = [];
 
-          data.forEach((note, index) => {
-            const noteDiv = document.createElement('div');
-            noteDiv.classList.add('note');
-            noteDiv.innerHTML = `
-              <h3>${note.title}</h3>
-              <p>${note.content}</p>
-              <button class="importantButton" data-index="${index}">${note.important ? 'Odebrat důležitost' : 'Označit jako důležitou'}</button>
-              <button class="deleteButton" data-index="${index}">Smazat</button>
-            `;
-            notesList.appendChild(noteDiv);
-          });
-        });
+  // Funkce pro vykreslení seznamu poznámek (s filtrem)
+  function renderNotes() {
+    const notesList = document.getElementById('notesList');
+    notesList.innerHTML = '';
+
+    const showOnlyImportant = document.getElementById('importantOnly').checked;
+    const filteredNotes = showOnlyImportant ? notes.filter(n => n.important) : notes;
+
+    filteredNotes.forEach((note, index) => {
+      const noteDiv = document.createElement('div');
+      noteDiv.classList.add('note');
+
+      noteDiv.innerHTML = `
+        <h3>${escapeHtml(note.title)}</h3>
+        <p>${escapeHtml(note.content)}</p>
+        ${note.important ? '<span class="importantLabel">Důležité</span>' : ''}
+        <button class="importantButton" data-index="${index}">
+          ${note.important ? 'Odebrat důležitost' : 'Označit jako důležitou'}
+        </button>
+        <button class="deleteButton" data-index="${index}">Smazat</button>
+      `;
+      notesList.appendChild(noteDiv);
     });
+  }
 
-    // Přidání poznámky
-    document.getElementById('noteForm').addEventListener('submit', function(event) {
-      event.preventDefault();
+  // Bezpečné escapování HTML znaků (prevence XSS)
+  function escapeHtml(text) {
+    const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+  }
 
-      const titleInput = document.getElementById('title');
-      const contentInput = document.getElementById('content');
-
-      const title = titleInput.value;
-      const content = contentInput.value;
-
-      fetch('/notes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content })
-      })
-      .then(response => response.json())
-      .then(data => {
-        const noteDiv = document.createElement('div');
-        noteDiv.classList.add('note');
-        noteDiv.innerHTML = `
-          <h3>${data.title}</h3>
-          <p>${data.content}</p>
-          <button class="importantButton" data-index="0">Označit jako důležitou</button>
-          <button class="deleteButton" data-index="0">Smazat</button>
-        `;
-        document.getElementById('notesList').appendChild(noteDiv);
-
-        // Vymazání vstupních polí
-        titleInput.value = '';
-        contentInput.value = '';
-      });
-    });
-
-    // Odhlášení uživatele
-    document.getElementById('logoutButton').addEventListener('click', async () => {
-      await fetch('/logout', { method: 'POST' });
-      window.location.href = '/index.html'; // Přesměrování na přihlašovací stránku
-    });
-
-    // Změna důležitosti poznámky
-    document.getElementById('notesList').addEventListener('click', function(event) {
-      if (event.target && event.target.classList.contains('importantButton')) {
-        const index = event.target.getAttribute('data-index');
-        fetch(`/notes/${index}/important`, {
-          method: 'PUT'
-        })
-        .then(response => response.json())
-        .then(data => {
-          event.target.textContent = data.note.important ? 'Odebrat důležitost' : 'Označit jako důležitou';
-        });
-      }
-    });
-
-    // Zobrazit formulář pro zrušení účtu
-    document.getElementById('deleteAccountBtn').addEventListener('click', () => {
-      document.getElementById('deleteAccountForm').style.display = 'block';
-    });
-
-    // Odeslání požadavku na zrušení účtu
-    document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
-      const password = document.getElementById('deletePassword').value;
-
-      const response = await fetch('/deleteAccount', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        alert(result.message);
-        window.location.href = '/index.html';
+  // Kontrola přihlášení uživatele
+  fetch('/checkSession')
+    .then(res => res.json())
+    .then(data => {
+      if (data.loggedIn) {
+        document.getElementById('logoutButton').style.display = 'block';
+        loadNotes();
       } else {
-        alert(result.message || 'Chyba při rušení účtu.');
+        window.location.href = '/index.html';
       }
     });
 
-    // Smazání poznámky
-    document.getElementById('notesList').addEventListener('click', function(event) {
-      if (event.target && event.target.classList.contains('deleteButton')) {
-        const index = event.target.getAttribute('data-index');
-        fetch(`/notes/${index}`, {
-          method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
-          // Po smazání poznámky ji odstraníme ze seznamu na stránce
-          event.target.parentElement.remove();
-        });
-      }
-    });
-
-    document.getElementById('importantOnly').addEventListener('change', function () {
+  // Načtení poznámek ze serveru
+  function loadNotes() {
     fetch('/notes')
       .then(res => res.json())
-      .then(notes => {
-        const list = document.getElementById('notesList');
-        list.innerHTML = '';
-
-        const showOnlyImportant = this.checked;
-        const filtered = showOnlyImportant ? notes.filter(n => n.important) : notes;
-
-        filtered.forEach(note => {
-          const div = document.createElement('div');
-          div.innerHTML = `
-            <h3>${note.title}</h3>
-            <p>${note.content}</p>
-            ${note.important ? '<strong style="color:red;">Důležité</strong>' : ''}
-          `;
-          list.appendChild(div);
-        });
+      .then(data => {
+        notes = data;
+        renderNotes();
       });
+  }
+
+  // Přidání nové poznámky
+  document.getElementById('noteForm').addEventListener('submit', e => {
+    e.preventDefault();
+
+    const title = document.getElementById('title').value.trim();
+    const content = document.getElementById('content').value.trim();
+
+    if (!title || !content) return;
+
+    fetch('/notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, content })
+    })
+    .then(res => res.json())
+    .then(newNote => {
+      notes.push(newNote);
+      renderNotes();
+
+      // Vymazání vstupních polí
+      document.getElementById('title').value = '';
+      document.getElementById('content').value = '';
+    });
   });
 
-  window.addEventListener('DOMContentLoaded', () => {
-  fetch('/notes')
-    .then(res => res.json())
-    .then(notes => {
-      const list = document.getElementById('notesList');
-      list.innerHTML = ''; // vyčisti
+  // Klikání na tlačítka ve výpisu poznámek
+  document.getElementById('notesList').addEventListener('click', e => {
+    const target = e.target;
+    if (target.classList.contains('importantButton')) {
+      const idx = target.getAttribute('data-index');
+      const noteId = notes[idx].id !== undefined ? notes[idx].id : idx;
 
-      notes.forEach(note => {
-        const div = document.createElement('div');
-        div.innerHTML = `
-          <h3>${note.title}</h3>
-          <p>${note.content}</p>
-          ${note.important ? '<strong style="color:red;">Důležité</strong>' : ''}
-        `;
-        list.appendChild(div);
-      });
+      fetch(`/notes/${noteId}/important`, { method: 'PUT' })
+        .then(res => res.json())
+        .then(updatedNote => {
+          // Aktualizovat poznámku v poli notes podle id
+          notes[idx].important = updatedNote.note.important;
+          renderNotes();
+        });
+    }
+
+    if (target.classList.contains('deleteButton')) {
+      const idx = target.getAttribute('data-index');
+      const noteId = notes[idx].id !== undefined ? notes[idx].id : idx;
+
+      fetch(`/notes/${noteId}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(() => {
+          // Odebrat poznámku z pole a překreslit
+          notes.splice(idx, 1);
+          renderNotes();
+        });
+    }
+  });
+
+  // Filtrování důležitých poznámek
+  document.getElementById('importantOnly').addEventListener('change', () => {
+    renderNotes();
+  });
+
+  // Odhlášení
+  document.getElementById('logoutButton').addEventListener('click', () => {
+    fetch('/logout', { method: 'POST' })
+      .then(() => window.location.href = '/index.html');
+  });
+
+  // Zobrazení formuláře pro zrušení účtu
+  document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+    const form = document.getElementById('deleteAccountForm');
+    form.style.display = form.style.display === 'block' ? 'none' : 'block';
+  });
+
+  // Potvrzení zrušení účtu
+  document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+    const password = document.getElementById('deletePassword').value;
+
+    if (!password) {
+      alert('Zadejte heslo!');
+      return;
+    }
+
+    fetch('/deleteAccount', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    })
+    .then(res => res.json().then(data => ({ ok: res.ok, data })))
+    .then(({ ok, data }) => {
+      if (ok) {
+        alert(data.message);
+        window.location.href = '/index.html';
+      } else {
+        alert(data.message || 'Chyba při rušení účtu.');
+      }
     });
-});
-  </script>
+  });
+</script>
 </body>
 </html>

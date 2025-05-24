@@ -145,46 +145,56 @@ button:hover {
 }
 
 .switch {
-  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.5em;
-  font-size: 1.1em;
-  margin: 1em 0;
+  gap: 10px;
   cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+  color: #333;
+  font-size: 1em;
 }
 
+/* Skrytý checkbox */
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
+  position: absolute;
 }
 
+/* Slider */
 .slider {
+  display: inline-block;
   position: relative;
-  width: 40px;
-  height: 20px;
+  width: 50px;
+  height: 24px;
   background-color: #ccc;
-  border-radius: 20px;
-  transition: background-color 0.3s;
+  border-radius: 34px;
+  transition: background-color 0.3s ease;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.15);
 }
 
+/* Kolečko na slideru */
 .slider::before {
   content: "";
   position: absolute;
   left: 3px;
   top: 3px;
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   background-color: white;
   border-radius: 50%;
-  transition: transform 0.3s;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-input:checked + .slider {
+/* Když je checkbox zaškrtnutý */
+.switch input:checked + .slider {
   background-color: #4caf50;
 }
 
-input:checked + .slider::before {
-  transform: translateX(20px);
+.switch input:checked + .slider::before {
+  transform: translateX(26px);
 }

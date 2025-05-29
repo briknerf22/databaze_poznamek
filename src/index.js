@@ -204,6 +204,6 @@ app.get('/poznamky.html', isAuthenticated, (req, res) => {
 });
 
 // ==== Start serveru ==== //
-app.listen(port, () => {
-  console.log(`✅ Server běží na http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`✅ Server běží na http://0.0.0.0:${port}`);
 });

@@ -4,7 +4,8 @@
   "description": "Jednoduchá aplikace na poznámky v Node.js a Express",
   "main": "src/index.js",
   "scripts": {
-    "dev": "node src/index.js"
+    "dev": "node src/index.js",
+    "start": "node src/index.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
